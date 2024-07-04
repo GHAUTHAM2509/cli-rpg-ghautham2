@@ -1,7 +1,7 @@
-use image::{GenericImageView};
+use image::GenericImageView;
 use colored::*;
 use std::{thread, time::Duration};
-use termion::terminal_size;
+// muse termion::terminal_size;
 
 fn get_str_ascii(intent: u8) -> &'static str {
     let ascii = ["!", "@","~","[","/","&", "o", ":", "*", "#", " ", "!"];
@@ -28,9 +28,12 @@ fn get_image(dir: &str, term_width: u16, term_height: u16, line_delay: Duration)
                     let pix = img.get_pixel(x, y);
                     let mut intensity = (pix[0] as u32 / 3 + pix[1] as u32 / 3 + pix[2] as u32 / 3) as u8;
                     if pix[3] == 0 {
-                        intensity = pix[1];
+                        intensity = (255 + 0 + 0) as u8;
+                        print!("{}", get_colored_ascii(intensity, 0, 200, 0));
                     }
+                    if pix[3] != 0{
                     print!("{}", get_colored_ascii(intensity, pix[0], pix[1], pix[2]));
+                    }
                 }
                 println!("");
                 thread::sleep(line_delay);
