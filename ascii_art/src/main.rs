@@ -47,7 +47,7 @@ fn main() {
 
     loop {
         // Get terminal size
-        let (term_width, term_height) = terminal_size().unwrap();
+        let (term_width, term_height) = (200,100);
 
         for image_path in &image_paths {
             print!("\x1B[2J\x1B[1;1H"); // Clear the screen
