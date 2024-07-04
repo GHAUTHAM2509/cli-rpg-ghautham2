@@ -1,10 +1,9 @@
 use image::GenericImageView;
 use colored::*;
 use std::{thread, time::Duration};
-// muse termion::terminal_size;
 
 fn get_str_ascii(intent: u8) -> &'static str {
-    let ascii = ["!", "@","~","[","/","&", "o", ":", "*", "#", " ", "!"];
+    let ascii = ["!","*", "@","~","[","/","&", "o", ":", "*", "#", " ", "!"];
     let index = (intent as usize * (ascii.len() - 1)) / 255;
     ascii[index]
 }
@@ -31,8 +30,8 @@ fn get_image(dir: &str, term_width: u16, term_height: u16, line_delay: Duration)
                         intensity = (255 + 0 + 0) as u8;
                         print!("{}", get_colored_ascii(intensity, 0, 200, 0));
                     }
-                    if pix[3] != 0{
-                    print!("{}", get_colored_ascii(intensity, pix[0], pix[1], pix[2]));
+                    if pix[3] != 0 {
+                        print!("{}", get_colored_ascii(intensity, pix[0], pix[1], pix[2]));
                     }
                 }
                 println!("");
@@ -47,17 +46,31 @@ fn get_image(dir: &str, term_width: u16, term_height: u16, line_delay: Duration)
 
 fn main() {
     let image_paths = vec!["image copy 3.png", "image copy 2.png"];
+    let image_paths2 = vec!["image copy 7.png"];
     let delay = Duration::from_millis(500);  // 500 milliseconds
     let line_delay = Duration::from_millis(50);  // 50 milliseconds delay between lines
+    let mut loop_count = 0;
 
     loop {
         // Get terminal size
-        let (term_width, term_height) = (180, 55);
-
+        let (term_width, term_height) = (190, 60);
+        
         for image_path in &image_paths {
             print!("\x1B[2J\x1B[1;1H"); // Clear the screen
             get_image(image_path, term_width, term_height, line_delay);
             thread::sleep(delay);
         }
+
+        loop_count += 1;
+        if loop_count >= 2 {
+            break;
+        }
+    }
+    let (term_width, term_height) = (185, 105);
+    // let (term_width, term_height) = (170, 50);
+    for image_path2 in &image_paths2 {
+        // print!("\x1B[2J\x1B[1;1H"); // Clear the screen
+        get_image(image_path2, term_width, term_height, line_delay);
+        thread::sleep(delay);
     }
 }
