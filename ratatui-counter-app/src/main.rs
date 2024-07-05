@@ -1,156 +1,99 @@
-use std::io;
-use ratatui::style::Style;
-use ratatui::{
-    buffer::Buffer,
-    crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
-    layout::{Alignment, Rect},
-    style::Stylize,
-    symbols::border,
-    text::{Line, Text},
-    widgets::{
-        block::{Position, Title},
-        Block, Paragraph, Widget,
-    },
-    Frame,
+use crossterm::{
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-fn main() -> io::Result<()> {
-    let mut terminal = tui::init()?;
-    let app_result = App::default().run(&mut terminal);
-    tui::restore()?;
-    app_result
-}
+use ratatui::{
+    backend::{Backend, CrosstermBackend},
+    layout::{Constraint, Direction, Layout},
+    style::{Color, Modifier, Style},
+    text::Text,
+    widgets::{Block, Borders, Paragraph},
+    Terminal,
+};
+use std::{
+    fs::File,
+    io::{self, BufRead, BufReader, Write},
+    thread,
+    time::Duration,
+};
 
-mod tui;
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Setup terminal
+    enable_raw_mode()?;
+    let mut stdout = io::stdout();
+    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
 
-#[derive(Debug, Default)]
-pub struct App {
-    counter: u8,
-    exit: bool,
-}
+    // Open the file
+    let file = File::open("ascii_art.txt")?;
+    let reader = BufReader::new(file);
 
-impl App {
-    /// runs the application's main loop until the user quits
-    pub fn run(&mut self, terminal: &mut tui::Tui) -> io::Result<()> {
-        while !self.exit {
-            terminal.draw(|frame| self.render_frame(frame))?;
-            self.handle_events()?;
-        }
-        Ok(())
+    // Run the application
+    let res = run_app(&mut terminal, reader);
+
+    // Restore terminal
+    disable_raw_mode()?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
+    terminal.show_cursor()?;
+
+    if let Err(err) = res {
+        println!("{:?}", err)
     }
 
-    fn render_frame(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.size());
-    }
+    Ok(())
+}
 
-    fn handle_events(&mut self) -> io::Result<()> {
-        match event::read()? {
-            // it's important to check that the event is a key press event as
-            // crossterm also emits key release and repeat events on Windows.
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                self.handle_key_event(key_event)
+fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut reader: BufReader<File>) -> io::Result<()> {
+    let mut lines = Vec::new();
+    let mut buf = String::new();
+    let mut done_reading = false;
+
+    loop {
+        // Non-blocking read of a line from the file
+        if !done_reading {
+            if let Ok(n) = reader.read_line(&mut buf) {
+                if n == 0 {
+                    done_reading = true;
+                } else {
+                    lines.push(buf.trim_end().to_string());
+                    buf.clear();
+
+                    // Draw the updated lines
+                    terminal.draw(|f| {
+                        let size = f.size();
+
+                        let block = Block::default()
+                            .title("Ratatui ASCII Art")
+                            .borders(Borders::ALL);
+
+                        let text = Text::from(lines.clone().join("\n"));
+
+                        let paragraph = Paragraph::new(text)
+                            .block(block)
+                            .style(Style::default().fg(Color::White));
+
+                        f.render_widget(paragraph, size);
+                    })?;
+                }
             }
-            _ => {}
-        };
-        Ok(())
-    }
-
-    fn handle_key_event(&mut self, key_event: KeyEvent) {
-        match key_event.code {
-            KeyCode::Char('q') => self.exit(),
-            KeyCode::Left => self.decrement_counter(),
-            KeyCode::Right => self.increment_counter(),
-            _ => {}
         }
-    }
-    fn exit(&mut self) {
-        self.exit = true;
-    }
 
-    fn increment_counter(&mut self) {
-        self.counter += 1;
-    }
+        // Exit if 'q' is pressed
+        if event::poll(Duration::from_millis(100))? {
+            if let Event::Key(key) = event::read()? {
+                if key.code == KeyCode::Char('q') {
+                    return Ok(());
+                }
+            }
+        }
 
-    fn decrement_counter(&mut self) {
-        self.counter -= 1;
-    }
-}
-
-impl Widget for &App {
-    fn render(self, area: Rect, buf: &mut Buffer) {
-        let title = Title::from(" Counter App Tutorial ".bold());
-        let instructions = Title::from(Line::from(vec![
-            " Decrement ".into(),
-            "<Left>".blue().bold(),
-            " Increment ".into(),
-            "<Right>".blue().bold(),
-            " Quit ".into(),
-            "<Q> ".blue().bold(),
-        ]));
-        let block = Block::bordered()
-            .title(title.alignment(Alignment::Center))
-            .title(
-                instructions
-                    .alignment(Alignment::Center)
-                    .position(Position::Bottom),
-            )
-            .border_set(border::THICK);
-
-        let counter_text = Text::from(vec![Line::from(vec![
-            "Value: ".into(),
-            self.counter.to_string().yellow(),
-        ])]);
-
-        Paragraph::new(counter_text)
-            .centered()
-            .block(block)
-            .render(area, buf);
-    }
-}
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn render() {
-        let app = App::default();
-        let mut buf = Buffer::empty(Rect::new(0, 0, 50, 4));
-
-        app.render(buf.area, &mut buf);
-
-        let mut expected = Buffer::with_lines(vec![
-            "┏━━━━━━━━━━━━━ Counter App Tutorial ━━━━━━━━━━━━━┓",
-            "┃                    Value: 0                    ┃",
-            "┃                                                ┃",
-            "┗━ Decrement <Left> Increment <Right> Quit <Q> ━━┛",
-        ]);
-        let title_style = Style::new().bold();
-        let counter_style = Style::new().yellow();
-        let key_style = Style::new().blue().bold();
-        expected.set_style(Rect::new(14, 0, 22, 1), title_style);
-        expected.set_style(Rect::new(28, 1, 1, 1), counter_style);
-        expected.set_style(Rect::new(13, 3, 6, 1), key_style);
-        expected.set_style(Rect::new(30, 3, 7, 1), key_style);
-        expected.set_style(Rect::new(43, 3, 4, 1), key_style);
-
-        // note ratatui also has an assert_buffer_eq! macro that can be used to
-        // compare buffers and display the differences in a more readable way
-        assert_eq!(buf, expected);
-    }
-    #[test]
-    fn handle_key_event() -> io::Result<()> {
-        let mut app = App::default();
-        app.handle_key_event(KeyCode::Right.into());
-        assert_eq!(app.counter, 1);
-
-        app.handle_key_event(KeyCode::Left.into());
-        assert_eq!(app.counter, 0);
-
-        let mut app = App::default();
-        app.handle_key_event(KeyCode::Char('q').into());
-        assert_eq!(app.exit, true);
-
-        Ok(())
+        // Sleep for a short duration to simulate incremental loading
+        thread::sleep(Duration::from_millis(100));
     }
 }
