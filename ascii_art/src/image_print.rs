@@ -12,7 +12,6 @@ pub fn main() {
 
     loop {
         // Get terminal size
-        
         let (term_width, term_height) = (190, 60);
         
         for image_path in &image_paths {
@@ -27,9 +26,8 @@ pub fn main() {
         }
     }
     let (term_width, term_height) = (189, 190);
-    // let (term_width, term_height) = (170, 50);
+    
     for image_path2 in &image_paths2 {
-        // print!("\x1B[2J\x1B[1;1H"); // Clear the screen
         get_image(image_path2, term_width, term_height, line_delay);
         thread::sleep(delay);
     }
