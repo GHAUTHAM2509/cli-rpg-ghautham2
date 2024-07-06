@@ -5,7 +5,7 @@ use image_processing::get_image;
 
 pub fn main() {
     let image_paths = vec!["image copy 3.png", "image copy 2.png"];
-    let image_paths2 = vec!["image copy 5.png"];
+    let image_paths2 = vec!["withoutbackground.png"];
     let delay = Duration::from_millis(500);  // 500 milliseconds
     let line_delay = Duration::from_millis(50);  // 50 milliseconds delay between lines
     let mut loop_count = 0;

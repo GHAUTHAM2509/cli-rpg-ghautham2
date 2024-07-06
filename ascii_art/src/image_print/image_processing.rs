@@ -24,6 +24,8 @@ pub fn get_image(dir: &str, term_width: u16, term_height: u16, line_delay: Durat
             let scale_height = (height as f32 / term_height as f32).ceil() as u32;
             let mut g = 0;
             let mut b = 255;
+            let mut r = 0;
+            let mut count = 0;
 
             for y in (0..height).step_by(scale_height as usize) {
                 for x in (0..width).step_by(scale_width as usize) {
@@ -31,14 +33,28 @@ pub fn get_image(dir: &str, term_width: u16, term_height: u16, line_delay: Durat
                     let mut intensity = (pix[0] as u32 / 3 + pix[1] as u32 / 3 + pix[2] as u32 / 3) as u8;
                     if pix[3] == 0 {
                         intensity = (255 + 0 + 0) as u8;
-                        print!("{}", get_colored_ascii(intensity, 0, g, b));
+                        print!("{}", get_colored_ascii(intensity, r, g, b));
                     } else {
                         print!("{}", get_colored_ascii(intensity, pix[0], pix[1], pix[2]));
                     }
                 }
-                if g < 250 && b > 0 {
-                    g += 7;
-                    b -= 7;  
+                if g < 250 && b > 0 && count == 0{
+                    g += 5;
+                    b -= 5;  
+                }
+                if g > 230{
+                    count = 1;
+                }
+                if count == 1 {
+                    if g > 3{
+                        g -= 3;
+                        r += 3;
+                    }
+                    if 0 < g && g < 10 && r > 5
+                    {
+                        r -=4;
+                        b +=4;
+                    }
                 }
 
                 println!("");
