@@ -3,7 +3,7 @@ use colored::*;
 use std::{thread, time::Duration};
 
 pub fn get_str_ascii(intent: u8) -> &'static str {
-    let ascii = ["0", "!", "*", "@", "~", "[", "/", "&", "o", ":", "*", "#", " ", "!"];
+    let ascii = ["0", "!", "*", "@", "~", "[", "/", "&", "o", ":", "*", "#", " ", "-"];
     let index = (intent as usize * (ascii.len() - 1)) / 255;
     ascii[index]
 }

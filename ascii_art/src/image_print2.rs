@@ -5,7 +5,7 @@ use image_processing::get_image;
 
 pub fn main() {
     // let image_paths = vec!["image copy 3.png", "image copy 2.png"];
-    let image_paths2 = vec!["i1.png","part_2.png","part_3.png","part_4.png","part_5.png","part_6.png","part_7.png","part_8.png","part_9.png"];
+    let image_paths2 = vec!["01.png","02.png","03.png","04.png","05.png","06.png","07.png","08.png","09.png"];
     // let image_paths2 = vec!["part_1.png","part_01.png"];
     let delay = Duration::from_millis(20);  // 500 milliseconds
     let line_delay = Duration::from_millis(20);  // 50 milliseconds delay between lines
