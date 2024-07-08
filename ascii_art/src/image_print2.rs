@@ -7,8 +7,8 @@ pub fn main() {
     // let image_paths = vec!["image copy 3.png", "image copy 2.png"];
     let image_paths2 = vec!["01.png","02.png","03.png","04.png","05.png","06.png","07.png","08.png","09.png"];
     // let image_paths2 = vec!["part_1.png","part_01.png"];
-    let delay = Duration::from_millis(20);  // 500 milliseconds
-    let line_delay = Duration::from_millis(20);  // 50 milliseconds delay between lines
+    let delay = Duration::from_millis(0);  // 500 milliseconds
+    let line_delay = Duration::from_millis(200);  // 50 milliseconds delay between lines
     // let mut loop_count = 0;
 
     // loop {
