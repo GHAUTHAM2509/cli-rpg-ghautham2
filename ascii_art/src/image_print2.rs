@@ -6,7 +6,7 @@ use term_size;
 
 pub fn main() {
     // let image_paths = vec!["image copy 3.png", "image copy 2.png"];
-    let image_paths2 = vec!["1.png","02.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png"];
+    let image_paths2 = vec!["1.png","02.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png","10.png"];
     // let image_paths2 = vec!["part_1.png","part_01.png"];
     let delay = Duration::from_millis(0);  // 500 milliseconds
     let line_delay = Duration::from_millis(20);  // 50 milliseconds delay between lines
@@ -34,7 +34,7 @@ pub fn main() {
     match termsize::get() {
         Some(size) => {
             term_width = size.cols;
-            term_height = size.cols*3;
+            term_height = size.cols*5;
             term_height = term_height/10;
         }
         None => {
