@@ -6,7 +6,7 @@ use term_size;
 
 pub fn main() {
     // let image_paths = vec!["image copy 3.png", "image copy 2.png"];
-    let image_paths2 = vec!["01.png","02.png","03.png","04.png","05.png","a.png","07.png","08.png","09.png"];
+    let image_paths2 = vec!["1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png"];
     // let image_paths2 = vec!["part_1.png","part_01.png"];
     let delay = Duration::from_millis(0);  // 500 milliseconds
     let line_delay = Duration::from_millis(20);  // 50 milliseconds delay between lines
