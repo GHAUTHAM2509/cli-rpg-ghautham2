@@ -34,7 +34,7 @@ pub fn main() {
     match termsize::get() {
         Some(size) => {
             term_width = size.cols;
-            term_height = size.cols*5;
+            term_height = size.cols*3;
             term_height = term_height/10;
         }
         None => {
