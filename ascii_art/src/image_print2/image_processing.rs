@@ -3,8 +3,8 @@ use colored::*;
 use std::{thread, time::Duration};
 
 pub fn get_str_ascii(intent: u8) -> &'static str {
-    let ascii = [" ", "!", "*", "@", "~", "[", "/", "&", "o", ":", "*", "#", "-", " "];
-    // let ascii = [" ", "!", "*", "@", "~", "[", "/", "&", "o", ":", "*", "#", " ", "."];
+    // let ascii = [" ", "!", "*", "@", "~", "[", "/", "&", "o", ":", "*", "#", "-", " "];
+    let ascii = [" ", "!", "*", "@", "~", "[", "/", "&", "o", ":", "*", "#", " ", "."];
     let index = (intent as usize * (ascii.len() - 1)) / 255;
     ascii[index]
 }
@@ -29,7 +29,6 @@ pub fn get_image(dir: &str, term_width: u16, term_height: u16, line_delay: Durat
             let mut b = 255;
             let mut r = 0;
             let mut count = 0;
-
             for y in (0..height).step_by(scale_height as usize) {
                 for x in (0..width).step_by(scale_width as usize) {
                     let pix = resized_img.get_pixel(x, y);

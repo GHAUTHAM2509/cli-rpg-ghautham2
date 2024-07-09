@@ -6,7 +6,7 @@ use term_size;
 
 pub fn main() {
     // let image_paths = vec!["image copy 3.png", "image copy 2.png"];
-    let image_paths2 = vec!["1.png","02.png","3.png","4.png","5.png","6.png","7.png","8.png","ab.png","10.png"];
+    let image_paths2 = vec!["1.png","02.png","3.png","4.png","5.png","6.png","7.png","8.png","w.png","10.png"];
     // let image_paths2 = vec!["part_1.png","part_01.png"];
     let delay = Duration::from_millis(0);  // 500 milliseconds
     let line_delay = Duration::from_millis(20);  // 50 milliseconds delay between lines
@@ -26,7 +26,7 @@ pub fn main() {
         }
     }
     // let (term_width, term_height) = (200, 45);
-    
+    print!("\x1B[2J\x1B[1;1H");
     for image_path2 in &image_paths2 {
         get_image(image_path2, term_width, term_height, line_delay);
         thread::sleep(delay);

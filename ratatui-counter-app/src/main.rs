@@ -63,26 +63,26 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut reader: BufReader<File>) 
                 } else {
                     lines.push(buf.trim_end().to_string());
                     buf.clear();
-
-                    // Draw the updated lines
-                    terminal.draw(|f| {
-                        let size = f.size();
-
-                        let block = Block::default()
-                            .title("Ratatui ASCII Art")
-                            .borders(Borders::ALL);
-
-                        let text = Text::from(lines.clone().join("\n"));
-
-                        let paragraph = Paragraph::new(text)
-                            .block(block)
-                            .style(Style::default().fg(Color::White));
-
-                        f.render_widget(paragraph, size);
-                    })?;
                 }
             }
         }
+
+        // Draw the updated lines
+        terminal.draw(|f| {
+            let size = f.size();
+
+            let block = Block::default()
+                .title("Ratatui ASCII Art")
+                .borders(Borders::ALL);
+
+            let text = Text::from(lines.clone().join("\n"));
+
+            let paragraph = Paragraph::new(text)
+                .block(block)
+                .style(Style::default().fg(Color::White));
+
+            f.render_widget(paragraph, size);
+        })?;
 
         // Exit if 'q' is pressed
         if event::poll(Duration::from_millis(100))? {
