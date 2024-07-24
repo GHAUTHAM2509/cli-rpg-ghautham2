@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut terminal = Terminal::new(backend)?;
 
     // Open the file
-    let file = File::open("ascii_art.txt")?;
+    let file = File::open("l.ans")?;
     let reader = BufReader::new(file);
 
     // Run the application
@@ -85,7 +85,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut reader: BufReader<File>) 
         })?;
 
         // Exit if 'q' is pressed
-        if event::poll(Duration::from_millis(100))? {
+        if event::poll(Duration::from_millis(1))? {
             if let Event::Key(key) = event::read()? {
                 if key.code == KeyCode::Char('q') {
                     return Ok(());
@@ -94,6 +94,6 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut reader: BufReader<File>) 
         }
 
         // Sleep for a short duration to simulate incremental loading
-        thread::sleep(Duration::from_millis(100));
+        // thread::sleep(Duration::from_millis(100));
     }
 }
